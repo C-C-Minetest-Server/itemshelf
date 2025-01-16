@@ -26,7 +26,9 @@ local function update_shelf(pos)
 	-- Remove all objects
 	local objs = minetest.get_objects_inside_radius(pos, 0.75)
 	for _,obj in pairs(objs) do
-		obj:remove()
+		if obj and obj:get_luaentity() and obj:get_luaentity().name == "itemshelf:item" then
+			obj:remove()
+		end
 	end
 
 	local node = minetest.get_node(pos)
@@ -202,16 +204,16 @@ function itemshelf.register_shelf(name, def)
 		end,
 		on_metadata_inventory_put = update_shelf,
 		on_metadata_inventory_take = update_shelf,
-		on_dig = function(pos, node, digger)
+		after_dig_node = function(pos, oldnode, oldmeta, digger)
 			-- Clear all object objects
 			local objs = minetest.get_objects_inside_radius(pos, 0.7)
 			for _,obj in pairs(objs) do
-				obj:remove()
+			    if obj and obj:get_luaentity() and obj:get_luaentity().name == "itemshelf:item" then
+				   obj:remove()
+			    end
 			end
-			-- Pop-up items
-			minetest.add_item(pos, node.name)
-			local meta = minetest.get_meta(pos)
-			local list = meta:get_inventory():get_list("main")
+
+			local list = oldmeta.inventory.main
 			for _,item in pairs(list) do
 				local drop_pos = {
 					x=math.random(pos.x - 0.5, pos.x + 0.5),
@@ -219,8 +221,6 @@ function itemshelf.register_shelf(name, def)
 					z=math.random(pos.z - 0.5, pos.z + 0.5)}
 				minetest.add_item(pos, item:to_string())
 			end
-			-- Remove node
-			minetest.remove_node(pos)
 		end,
 		on_blast = function(pos)
 			minetest.add_item(pos, minetest.get_node(pos).name)
