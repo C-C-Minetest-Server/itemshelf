@@ -200,9 +200,31 @@ function itemshelf.register_shelf(name, def)
 			end
 			return stack:get_count()
 		end,
-		on_metadata_inventory_move = update_shelf,
-		on_metadata_inventory_put = update_shelf,
-		on_metadata_inventory_take = update_shelf,
+		on_metadata_inventory_move = function(pos, from_list, from_index,
+			to_list, to_index, count, player)
+			local pname = player:get_player_name()
+			minetest.log("action",
+				(pname == "" and "A mod" or "Player " .. pname) ..
+				" moves stuff in itemshelf:" .. name ..
+				" at " .. minetest.pos_to_string(pos))
+			return update_shelf(pos)
+		end,
+		on_metadata_inventory_put = function(pos, listname, index, stack, player)
+			local pname = player:get_player_name()
+			minetest.log("action",
+				(pname == "" and "A mod" or "Player " .. pname) ..
+				" moves " .. stack:get_name() .. " " .. stack:get_count() .. " to itemshelf:" .. name ..
+				" at " .. minetest.pos_to_string(pos))
+			return update_shelf(pos)
+		end,
+		on_metadata_inventory_take = function(pos, listname, index, stack, player)
+			local pname = player:get_player_name()
+			minetest.log("action",
+				(pname == "" and "A mod" or "Player " .. pname) ..
+				" takes " .. stack:get_name() .. " " .. stack:get_count() .. " from itemshelf:" .. name ..
+				" at " .. minetest.pos_to_string(pos))
+			return update_shelf(pos)
+		end,
 		on_dig = function(pos, node, digger)
 			-- Clear all object objects
 			local objs = minetest.get_objects_inside_radius(pos, 0.7)
