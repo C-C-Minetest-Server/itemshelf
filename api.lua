@@ -200,6 +200,7 @@ function itemshelf.register_shelf(name, def)
 			end
 			return stack:get_count()
 		end,
+		on_metadata_inventory_move = update_shelf,
 		on_metadata_inventory_put = update_shelf,
 		on_metadata_inventory_take = update_shelf,
 		on_dig = function(pos, node, digger)
