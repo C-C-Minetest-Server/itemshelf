@@ -45,7 +45,7 @@ local function update_shelf(pos)
 	if vertical_displacement == 0 then
 		vertical_displacement = 0.2375
 	end
-	minetest.log("displacements: "..dump(depth_displacement)..", "..dump(vertical_displacement))
+	minetest.log("verbose", "displacements: "..dump(depth_displacement)..", "..dump(vertical_displacement))
 	-- Calculate the horizontal displacement. This one is hardcoded so that either 4 or 6
 	-- items are properly displayed.
 	local horizontal_displacement = 0.715
@@ -96,7 +96,7 @@ local function update_shelf(pos)
 			obj_count = obj_count + 1
 		end
 	end
-	minetest.log("Found "..dump(obj_count).." items on shelf inventory")
+	minetest.log("verbose", "Found "..dump(obj_count).." items on shelf inventory")
 	if obj_count > 0 then
 		local shown_items = math.min(#list, max_shown_items)
 		for i = 1, shown_items do
@@ -118,10 +118,10 @@ local function update_shelf(pos)
 			}
 
 			if not list[i]:is_empty() then
-				minetest.log("Adding item entity at "..minetest.pos_to_string(obj_pos))
+				minetest.log("verbose", "Adding item entity at "..minetest.pos_to_string(obj_pos))
 				temp_texture = list[i]:get_name()
 				temp_size = 0.8/max_shown_items
-				--minetest.log("Size: "..dump(temp_size))
+				--minetest.log("verbose", "Size: "..dump(temp_size))
 				local ent = minetest.add_entity(obj_pos, "itemshelf:item")
 				ent:set_properties({
 					wield_item = temp_texture,
