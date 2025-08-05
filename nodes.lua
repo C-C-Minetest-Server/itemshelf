@@ -205,11 +205,24 @@ end
 
 for _, data in ipairs({
 	-- Minetest Game defaults
-	{ "stairs:slab_wood",        "",       "Apple Wood",  "default_wood.png" },
-	{ "stairs:slab_pine_wood",   "pine",   "Pine Wood",   "default_pine_wood.png" },
-	{ "stairs:slab_aspen_wood",  "aspen",  "Aspen Wood",  "default_aspen_wood.png" },
-	{ "stairs:slab_acacia_wood", "acacia", "Acacia Wood", "default_acacia_wood.png" },
-	{ "stairs:slab_junglewood",  "jungle", "Jungle Wood", "default_junglewood.png" },
+	{ "stairs:slab_wood",           "",               "Apple Wood",     "default_wood.png" },
+	{ "stairs:slab_pine_wood",      "pine",           "Pine Wood",      "default_pine_wood.png" },
+	{ "stairs:slab_aspen_wood",     "aspen",          "Aspen Wood",     "default_aspen_wood.png" },
+	{ "stairs:slab_acacia_wood",    "acacia",         "Acacia Wood",    "default_acacia_wood.png" },
+	{ "stairs:slab_junglewood",     "jungle",         "Jungle Wood",    "default_junglewood.png" },
+
+	-- Ethereal woods
+	{ "stairs:slab_mushroom_trunk", "mushroom_trunk", "Mushroom Trunk", "ethereal_mushroom_trunk.png^[transformR90" },
+	{ "stairs:slab_frost_wood",     "frost_wood",     "Frost Wood",     "ethereal_frost_wood.png" },
+	{ "stairs:slab_yellow_wood",    "yellow_wood",    "Healing Wood",   "ethereal_yellow_wood.png" },
+	{ "stairs:slab_palm_wood",      "palm_wood",      "Palm Wood",      "moretrees_palm_wood.png" },
+	{ "stairs:slab_birch_wood",     "birch_wood",     "Birch Wood",     "moretrees_birch_wood.png" },
+	{ "stairs:slab_banana_wood",    "banana_wood",    "Banana Wood",    "ethereal_banana_wood.png" },
+	{ "stairs:slab_willow_wood",    "willow_wood",    "Willow Wood",    "ethereal_willow_wood.png" },
+	{ "stairs:slab_redwood_wood",   "redwood_wood",   "Redwood",        "ethereal_redwood_wood.png" },
+	{ "stairs:slab_bamboo_wood",    "bamboo_wood",    "Bamboo",         "ethereal_bamboo_floor.png^[transformR90" },
+	{ "stairs:slab_sakura_wood",    "sakura_wood",    "Sakura Wood",    "ethereal_sakura_wood.png" },
+	{ "stairs:slab_olive_wood",     "olive_wood",     "Olive Wood",     "ethereal_olive_wood.png" },
 }) do
 	local item_def = core.registered_items[data[1]]
 	if item_def then
