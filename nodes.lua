@@ -36,7 +36,7 @@ local default_half_shelf_open = {
 	}
 }
 
-local function register_node_and_recipe(item_name, material_name, display_prefix, texture)
+function itemshelf.register_shelves(item_name, material_name, display_prefix, texture, groups, sounds)
 	-- Backwards compatibility to keep existing node names same
 	if material_name ~= "" then material_name = material_name.."_" end
 
@@ -52,7 +52,9 @@ local function register_node_and_recipe(item_name, material_name, display_prefix
 		},
 		nodebox = default_shelf,
 		capacity = 4,
-		shown_items = 4
+		shown_items = 4,
+		groups = groups,
+		sounds = sounds,
 	})
 
 	minetest.register_craft({
@@ -76,7 +78,9 @@ local function register_node_and_recipe(item_name, material_name, display_prefix
 		},
 		nodebox = default_shelf,
 		capacity = 6,
-		shown_items = 6
+		shown_items = 6,
+		groups = groups,
+		sounds = sounds,
 	})
 	
 	minetest.register_craft({
@@ -102,6 +106,8 @@ local function register_node_and_recipe(item_name, material_name, display_prefix
 		capacity = 4,
 		shown_items = 4,
 		half_depth = true,
+		groups = groups,
+		sounds = sounds,
 	})
 
 	minetest.register_craft({
@@ -127,6 +133,8 @@ local function register_node_and_recipe(item_name, material_name, display_prefix
 		capacity = 6,
 		shown_items = 6,
 		half_depth = true,
+		groups = groups,
+		sounds = sounds,
 	})
 
 	minetest.register_craft({
@@ -153,6 +161,8 @@ local function register_node_and_recipe(item_name, material_name, display_prefix
 		capacity = 4,
 		shown_items = 4,
 		half_depth = true,
+		groups = groups,
+		sounds = sounds,
 	})
 
 	minetest.register_craft({
@@ -179,6 +189,8 @@ local function register_node_and_recipe(item_name, material_name, display_prefix
 		capacity = 6,
 		shown_items = 6,
 		half_depth = true,
+		groups = groups,
+		sounds = sounds,
 	})
 
 	minetest.register_craft({
@@ -191,9 +203,37 @@ local function register_node_and_recipe(item_name, material_name, display_prefix
 	})
 end
 
--- Register nodes and recipes on all minetest_game wood types
-register_node_and_recipe("stairs:slab_wood", "", "Apple Wood", "default_wood.png")
-register_node_and_recipe("stairs:slab_pine_wood", "pine", "Pine Wood", "default_pine_wood.png")
-register_node_and_recipe("stairs:slab_aspen_wood", "aspen", "Aspen Wood", "default_aspen_wood.png")
-register_node_and_recipe("stairs:slab_acacia_wood", "acacia", "Acacia Wood", "default_acacia_wood.png")
-register_node_and_recipe("stairs:slab_junglewood", "jungle", "Jungle Wood", "default_junglewood.png")
+for _, data in ipairs({
+	-- Minetest Game defaults
+	{ "stairs:slab_wood",           "",               "Apple Wood",     "default_wood.png" },
+	{ "stairs:slab_pine_wood",      "pine",           "Pine Wood",      "default_pine_wood.png" },
+	{ "stairs:slab_aspen_wood",     "aspen",          "Aspen Wood",     "default_aspen_wood.png" },
+	{ "stairs:slab_acacia_wood",    "acacia",         "Acacia Wood",    "default_acacia_wood.png" },
+	{ "stairs:slab_junglewood",     "jungle",         "Jungle Wood",    "default_junglewood.png" },
+
+	-- Ethereal woods
+	{ "stairs:slab_mushroom_trunk", "mushroom_trunk", "Mushroom Trunk", "ethereal_mushroom_trunk.png^[transformR90" },
+	{ "stairs:slab_frost_wood",     "frost_wood",     "Frost Wood",     "ethereal_frost_wood.png" },
+	{ "stairs:slab_yellow_wood",    "yellow_wood",    "Healing Wood",   "ethereal_yellow_wood.png" },
+	{ "stairs:slab_palm_wood",      "palm_wood",      "Palm Wood",      "moretrees_palm_wood.png" },
+	{ "stairs:slab_birch_wood",     "birch_wood",     "Birch Wood",     "moretrees_birch_wood.png" },
+	{ "stairs:slab_banana_wood",    "banana_wood",    "Banana Wood",    "ethereal_banana_wood.png" },
+	{ "stairs:slab_willow_wood",    "willow_wood",    "Willow Wood",    "ethereal_willow_wood.png" },
+	{ "stairs:slab_redwood_wood",   "redwood_wood",   "Redwood",        "ethereal_redwood_wood.png" },
+	{ "stairs:slab_bamboo_wood",    "bamboo_wood",    "Bamboo",         "ethereal_bamboo_floor.png^[transformR90" },
+	{ "stairs:slab_sakura_wood",    "sakura_wood",    "Sakura Wood",    "ethereal_sakura_wood.png" },
+	{ "stairs:slab_olive_wood",     "olive_wood",     "Olive Wood",     "ethereal_olive_wood.png" },
+}) do
+	local item_def = core.registered_items[data[1]]
+	if item_def then
+		-- Prepare groups
+		local groups = item_def.groups
+		groups = groups and table.copy(groups) or {}
+		groups.slab = nil
+		groups.not_in_creative_inventory = nil
+
+		local sounds = item_def.sounds
+
+		itemshelf.register_shelves(data[1], data[2], data[3], data[4], groups, sounds)
+	end
+end
