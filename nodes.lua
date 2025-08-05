@@ -36,7 +36,7 @@ local default_half_shelf_open = {
 	}
 }
 
-local function register_node_and_recipe(item_name, material_name, display_prefix, texture)
+function itemshelf.register_shelves(item_name, material_name, display_prefix, texture, groups, sounds)
 	-- Backwards compatibility to keep existing node names same
 	if material_name ~= "" then material_name = material_name.."_" end
 
@@ -52,7 +52,9 @@ local function register_node_and_recipe(item_name, material_name, display_prefix
 		},
 		nodebox = default_shelf,
 		capacity = 4,
-		shown_items = 4
+		shown_items = 4,
+		groups = groups,
+		sounds = sounds,
 	})
 
 	minetest.register_craft({
@@ -76,7 +78,9 @@ local function register_node_and_recipe(item_name, material_name, display_prefix
 		},
 		nodebox = default_shelf,
 		capacity = 6,
-		shown_items = 6
+		shown_items = 6,
+		groups = groups,
+		sounds = sounds,
 	})
 	
 	minetest.register_craft({
@@ -102,6 +106,8 @@ local function register_node_and_recipe(item_name, material_name, display_prefix
 		capacity = 4,
 		shown_items = 4,
 		half_depth = true,
+		groups = groups,
+		sounds = sounds,
 	})
 
 	minetest.register_craft({
@@ -127,6 +133,8 @@ local function register_node_and_recipe(item_name, material_name, display_prefix
 		capacity = 6,
 		shown_items = 6,
 		half_depth = true,
+		groups = groups,
+		sounds = sounds,
 	})
 
 	minetest.register_craft({
@@ -153,6 +161,8 @@ local function register_node_and_recipe(item_name, material_name, display_prefix
 		capacity = 4,
 		shown_items = 4,
 		half_depth = true,
+		groups = groups,
+		sounds = sounds,
 	})
 
 	minetest.register_craft({
@@ -179,6 +189,8 @@ local function register_node_and_recipe(item_name, material_name, display_prefix
 		capacity = 6,
 		shown_items = 6,
 		half_depth = true,
+		groups = groups,
+		sounds = sounds,
 	})
 
 	minetest.register_craft({
@@ -191,9 +203,24 @@ local function register_node_and_recipe(item_name, material_name, display_prefix
 	})
 end
 
--- Register nodes and recipes on all minetest_game wood types
-register_node_and_recipe("stairs:slab_wood", "", "Apple Wood", "default_wood.png")
-register_node_and_recipe("stairs:slab_pine_wood", "pine", "Pine Wood", "default_pine_wood.png")
-register_node_and_recipe("stairs:slab_aspen_wood", "aspen", "Aspen Wood", "default_aspen_wood.png")
-register_node_and_recipe("stairs:slab_acacia_wood", "acacia", "Acacia Wood", "default_acacia_wood.png")
-register_node_and_recipe("stairs:slab_junglewood", "jungle", "Jungle Wood", "default_junglewood.png")
+for _, data in ipairs({
+	-- Minetest Game defaults
+	{ "stairs:slab_wood",        "",       "Apple Wood",  "default_wood.png" },
+	{ "stairs:slab_pine_wood",   "pine",   "Pine Wood",   "default_pine_wood.png" },
+	{ "stairs:slab_aspen_wood",  "aspen",  "Aspen Wood",  "default_aspen_wood.png" },
+	{ "stairs:slab_acacia_wood", "acacia", "Acacia Wood", "default_acacia_wood.png" },
+	{ "stairs:slab_junglewood",  "jungle", "Jungle Wood", "default_junglewood.png" },
+}) do
+	local item_def = core.registered_items[data[1]]
+	if item_def then
+		-- Prepare groups
+		local groups = item_def.groups
+		groups = groups and table.copy(groups) or {}
+		groups.slab = nil
+		groups.not_in_creative_inventory = nil
+
+		local sounds = item_def.sounds
+
+		itemshelf.register_shelves(data[1], data[2], data[3], data[4], groups, sounds)
+	end
+end

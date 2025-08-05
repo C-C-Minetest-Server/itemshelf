@@ -153,7 +153,11 @@ function itemshelf.register_shelf(name, def)
 		drawtype = "mesh"
 	end
 
-	minetest.register_node("itemshelf:"..name, {
+	local groups = def.groups and table.copy(def.groups) or {}
+	groups.itemshelf = 1
+	groups.itemshelf_shown_items = def.shown_items or 4
+
+	minetest.register_node(":itemshelf:"..name, {
 		description = def.description,
 		tiles = def.textures,
 		paramtype = "light",
@@ -161,7 +165,8 @@ function itemshelf.register_shelf(name, def)
 		drawtype = drawtype,
 		node_box = def.nodebox,
 		mesh = def.mesh,
-		groups = {choppy = 2, itemshelf = 1, itemshelf_shown_items = def.shown_items or 4},
+		groups = groups,
+		sounds = def.sounds,
 		on_construct = function(pos)
 			-- Initialize inventory
 			local meta = minetest.get_meta(pos)
