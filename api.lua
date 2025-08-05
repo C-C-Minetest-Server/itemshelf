@@ -47,7 +47,7 @@ local function update_shelf(pos)
 	if vertical_displacement == 0 then
 		vertical_displacement = 0.2375
 	end
-	minetest.log("displacements: "..dump(depth_displacement)..", "..dump(vertical_displacement))
+	minetest.log("verbose", "displacements: "..dump(depth_displacement)..", "..dump(vertical_displacement))
 	-- Calculate the horizontal displacement. This one is hardcoded so that either 4 or 6
 	-- items are properly displayed.
 	local horizontal_displacement = 0.715
@@ -98,7 +98,7 @@ local function update_shelf(pos)
 			obj_count = obj_count + 1
 		end
 	end
-	minetest.log("Found "..dump(obj_count).." items on shelf inventory")
+	minetest.log("verbose", "Found "..dump(obj_count).." items on shelf inventory")
 	if obj_count > 0 then
 		local shown_items = math.min(#list, max_shown_items)
 		for i = 1, shown_items do
@@ -120,10 +120,10 @@ local function update_shelf(pos)
 			}
 
 			if not list[i]:is_empty() then
-				minetest.log("Adding item entity at "..minetest.pos_to_string(obj_pos))
+				minetest.log("verbose", "Adding item entity at "..minetest.pos_to_string(obj_pos))
 				temp_texture = list[i]:get_name()
 				temp_size = 0.8/max_shown_items
-				--minetest.log("Size: "..dump(temp_size))
+				--minetest.log("verbose", "Size: "..dump(temp_size))
 				local ent = minetest.add_entity(obj_pos, "itemshelf:item")
 				ent:set_properties({
 					wield_item = temp_texture,
@@ -202,8 +202,31 @@ function itemshelf.register_shelf(name, def)
 			end
 			return stack:get_count()
 		end,
-		on_metadata_inventory_put = update_shelf,
-		on_metadata_inventory_take = update_shelf,
+		on_metadata_inventory_move = function(pos, from_list, from_index,
+			to_list, to_index, count, player)
+			local pname = player:get_player_name()
+			minetest.log("action",
+				(pname == "" and "A mod" or "Player " .. pname) ..
+				" moves stuff in itemshelf:" .. name ..
+				" at " .. minetest.pos_to_string(pos))
+			return update_shelf(pos)
+		end,
+		on_metadata_inventory_put = function(pos, listname, index, stack, player)
+			local pname = player:get_player_name()
+			minetest.log("action",
+				(pname == "" and "A mod" or "Player " .. pname) ..
+				" moves " .. stack:get_name() .. " " .. stack:get_count() .. " to itemshelf:" .. name ..
+				" at " .. minetest.pos_to_string(pos))
+			return update_shelf(pos)
+		end,
+		on_metadata_inventory_take = function(pos, listname, index, stack, player)
+			local pname = player:get_player_name()
+			minetest.log("action",
+				(pname == "" and "A mod" or "Player " .. pname) ..
+				" takes " .. stack:get_name() .. " " .. stack:get_count() .. " from itemshelf:" .. name ..
+				" at " .. minetest.pos_to_string(pos))
+			return update_shelf(pos)
+		end,
 		after_dig_node = function(pos, oldnode, oldmeta, digger)
 			-- Clear all object objects
 			local objs = minetest.get_objects_inside_radius(pos, 0.7)
@@ -251,11 +274,13 @@ end
 
 -- Entity for item displayed on shelf
 minetest.register_entity("itemshelf:item", {
-	hp_max = 1,
-	visual = "wielditem",
-	visual_size = {x = 0.20, y = 0.20},
-	collisionbox = {0,0,0, 0,0,0},
-	physical = false,
+	initial_properties = {
+		hp_max = 1,
+		physical = false,
+		collisionbox = { 0, 0, 0, 0, 0, 0 },
+		visual = "wielditem",
+		visual_size = { x = 0.20, y = 0.20 },
+	},
 	on_activate = function(self, staticdata)
 		-- Staticdata
 		local data = {}
